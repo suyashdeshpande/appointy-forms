@@ -1,0 +1,67 @@
+<div [formGroup]="form">
+  <label *ngIf="field.label"
+         [ngClass]="field.classes?.label"
+         [attr.for]="field.key">
+    {{field.label}}
+  </label>
+
+  <div [ngSwitch]="field.type">
+    <select *ngSwitchCase="'select'"
+            [formControlName]="field.key"
+            (ngModelChange)="onValueChange($event)"
+            [ngClass]="field.classes?.fields"
+            [id]="field.key">
+      <option *ngFor="let o of field.options" [value]="o.value">{{o.name ? o.name : o.value}}
+      </option>
+    </select>
+
+    <div *ngSwitchCase="'checkbox'" [ngClass]="field.classes?.fields">
+      <div *ngFor="let o of field.options" class="checkbox">
+        <input type="checkbox"
+               [formControlName]="field.key"
+               [name]="field.key"
+               [value]="o.value"
+               [checked]="isSelectActive(o)"
+               (change)="checkboxValueChange($event)"
+               [disabled]="o.disabled"
+               (click)="setCheckbox(o)">
+        <span>{{o.name ? o.name : o.value}}</span>
+      </div>
+    </div>
+
+    <textarea *ngSwitchCase="'textarea'"
+              [formControlName]="field.key"
+              (ngModelChange)="onValueChange($event)"
+              [id]="field.key"
+              [ngClass]="field.classes?.fields"
+              [attr.placeholder]="field.placeholder">
+
+    </textarea>
+
+    <div *ngSwitchCase="'radio'" [ngClass]="field.classes?.fields">
+      <div class="radio" *ngFor="let o of field.options">
+        <input type="radio"
+               [formControlName]="field.key"
+               [name]="field.key"
+               [value]="o.value"
+               [checked]="field.value === o.value"
+               (click)="setRadio(o)">
+        <span>{{o.name ? o.name : o.value}}</span>
+      </div>
+    </div>
+
+    <input *ngSwitchDefault
+           [formControlName]="field.key"
+           [attr.placeholder]="field.placeholder"
+    [type]="field.type"
+    (ngModelChange)="onValueChange($event)"
+    [ngClass]="field.classes?.fields"
+    [id]="field.key">
+
+  </div>
+
+  <div class="error-block" *ngIf="settings.showValidation" [hidden]="showErrorMessages" [ngClass]="field.classes?.error">
+    <span *ngFor="let e of errors()">{{e}}</span>
+  </div>
+
+</div>

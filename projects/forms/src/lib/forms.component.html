@@ -1,0 +1,12 @@
+<form (submit)="submit()" [formGroup]="comp.form" [ngClass]="comp.data.classes?.form">
+
+  <ngx-fields *ngFor="let field of comp.data.fields" [info]="{fields: field, form: comp.form, settings: comp.settings}"
+              (valueChange)="onFieldValueChange($event)"></ngx-fields>
+
+  <div *ngIf="comp.data.settings.submitButton" [ngClass]="comp.data.classes?.submit">
+    <button type="submit" [disabled]="!comp.form.valid && comp.settings.extraValidation">
+      {{comp.data.settings.submitButtonText}}
+    </button>
+  </div>
+
+</form>
