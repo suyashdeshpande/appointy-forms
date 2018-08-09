@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -7,19 +8,21 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
+  formGroup: any = {};
+
   public data = {
     settings: {
       submitButtonText: 'Send',
     },
     classes: {
-      form: 'some-class',
+      form: 'form-class',
       submit: ['class-one', 'class-two']
     },
     fields: [
       {
         type: 'text',
         key: 'firstName',
-        value: 'John Doe',
+        value: 'Appointy',
         label: 'First Name',
         validation: [
           {type: 'required'},
@@ -42,8 +45,8 @@ export class AppComponent {
         value: 'osijek',
         order: 2,
         options: [
-          {value: 'osijek', name: 'Osijek'},
-          {value: 'zagreb', name: 'Zagreb'}
+          {value: 'Bhopal', name: 'Bhopal'},
+          {value: 'Indore', name: 'Indore'}
         ]
       },
       {
@@ -82,6 +85,7 @@ export class AppComponent {
 
   onSubmit(event) {
     console.log(event);
+    console.log('after submit binded form group', this.formGroup);
   }
 
   onChanges(event) {

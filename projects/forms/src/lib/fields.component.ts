@@ -1,7 +1,6 @@
 import {Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
-import {NgxFields, NgxSettings} from './interface';
+import {NgxFields, NgxSettings, NgxValidation} from './interface';
 import {FormGroup} from '@angular/forms';
-import {type} from 'os';
 
 @Component({
   selector: 'ngx-fields',
@@ -102,7 +101,8 @@ export class FieldsComponent {
   }
 
   private _setError(item: any, errors: any) {
-    let errorMessage: string = this.field.validation.find(a => a.type.toLowerCase() === item).message;
+    let errorMessage: string;
+    errorMessage = this.field.validation.find(a => a.type.toLowerCase() === item).message;
     const tag: string = this.field.label || this.field.key;
 
     if (!errorMessage) {

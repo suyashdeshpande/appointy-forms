@@ -1,20 +1,30 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnInit, Output} from '@angular/core';
 import {NgxFormData, NgxSettings} from './interface';
-import {FormGroup} from '@angular/forms';
+import {ControlValueAccessor, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {FormsService} from './forms.service';
 
 @Component({
   selector: 'ngx-forms',
   templateUrl: './forms.component.html',
-  styles: []
+  styles: [],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormsComponent),
+      multi: true
+    }
+  ]
 })
-export class FormsComponent implements OnInit {
+export class FormsComponent implements OnInit, ControlValueAccessor {
 
   @Input() set FormData(value: NgxFormData) {
     this._data = value;
     this._data.settings = this._setSettings(value.settings);
     const cg: any = this._service.create(this._data.fields);
     this._form = cg.fbGroup;
+
+    console.log('_form ', this._form);
+
     this._matches = cg.matches;
     this.comp = {
       data: this._data,
@@ -42,18 +52,21 @@ export class FormsComponent implements OnInit {
 
   submit() {
     this.onSubmit.emit(this._form.value);
+    this.onChangeFn(this._form);
+    console.log('after submit _form', this._form);
   }
 
   onFieldValueChange(event: any) {
     if (this._matches) {
       const key = Object.keys(event)[0];
       // let mat: any;
-      const mat: any = this._matches.find(a => a.toMatch === key);
+      const mat: any = this._matches.find((a: any) => a.toMatch === key);
 
       if (mat) {
         this._form.controls[mat.model].updateValueAndValidity();
       }
     }
+    console.log('on field value change matches', this._matches);
     this.onChanges.emit(event);
   }
 
@@ -73,7 +86,11 @@ export class FormsComponent implements OnInit {
 
     if (settings) {
       for (const i in defaultSettings) {
-        defaultSettings[i] = settings.hasOwnProperty(i) ? settings[i] : defaultSettings[i];
+        if (settings.hasOwnProperty(i)) {
+          defaultSettings[i] = settings[i];
+        } else {
+          defaultSettings[i] = defaultSettings [i];
+        }
       }
       return defaultSettings;
     }
@@ -81,5 +98,26 @@ export class FormsComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  registerOnChange(fn: any): void {
+    this.onChangeFn = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouchedFn = fn;
+  }
+
+  // setDisabledState(isDisabled: boolean): void {
+  // }
+
+  writeValue(obj: any): void {
+    if (obj instanceof FormGroup) {
+      this._form = obj;
+
+    }
+  }
+
+  onChangeFn = (value: FormGroup) => {};
+  onTouchedFn = () => {};
 
 }
